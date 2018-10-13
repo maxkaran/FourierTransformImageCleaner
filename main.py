@@ -130,13 +130,11 @@ def compute():
   magPositionList = list() #list of x,y coords of none zero magnitudes
 
   gridImageFT = imageFT.copy()
-  print gridImageFT
-  print 'above is the gridImageFT'
 
   for x in range(height):
     for y in range(width):
       if FTmagnitudes[x,y] < minThreshold:
-        gridImageFT[x,y] = 0
+        gridImageFT[x,y] = 0 #set components to zero if below the minimum threshold
       else:
         #add none zero magnitudes to a list and set gridImageFT to that list
         magPositionList.append([x,y])
@@ -172,6 +170,14 @@ def compute():
   # Remove grid image from original image
 
   print '6. remove grid'
+  
+  resultImage = image.copy()
+
+  for x in range(resultImage.shape[0]):
+    for y in range(resultImage.shape[1]):
+      if gridImage[x,y] > 16:
+        resultImage[x,y] = 0
+
 
 
   if resultImage is None:
