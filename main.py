@@ -117,6 +117,7 @@ def compute():
       ak =  2 * np.real(imageFT[x,y])
       bk = -2 * np.imag(imageFT[x,y])
       FTmagnitudes[x,y] = np.sqrt( ak*ak + bk*bk )
+
       if x != 0 and y != 0 and FTmagnitudes[x,y] > max:
         max = FTmagnitudes[x,y]
 
@@ -133,10 +134,10 @@ def compute():
       if FTmagnitudes[x,y] < minThreshold:
         FTmagnitudes[x,y] = 0
       else:
-        #TODO add none zero magnitudes to a list and set gridImageFT to that list
+        #add none zero magnitudes to a list and set gridImageFT to that list
         magPositionList.append([x,y])
 
-  gridImageFT = np.array(magPositionList)
+  gridImageFT = np.array(magPositionList) #convert list to np array so it has shape attribute
   print gridImageFT
 
   if gridImageFT is None:
@@ -154,12 +155,22 @@ def compute():
 
   print '5. inverse FT'
 
+  gridImage = inverseFT(gridImageFT)
+
   if gridImage is None:
     gridImage = np.zeros( (height,width), dtype=np.complex_ )
 
   # Remove grid image from original image
 
   print '6. remove grid'
+
+  print gridImage
+  resultImage = image.copy()
+
+  for x in range(gridImage.shape[0]):
+    for y in range(gridImage.shape[1]):
+      if gridImage[x,y] > 16:
+        resultImage[x,y] = 0
 
   if resultImage is None:
     resultImage = image.copy()
