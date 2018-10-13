@@ -119,7 +119,7 @@ def compute():
       FTmagnitudes[x,y] = np.sqrt( ak*ak + bk*bk )
 
       if x != 0 and y != 0 and FTmagnitudes[x,y] > max:
-        max = FTmagnitudes[x,y]
+        max = FTmagnitudes[x,y] #keep track of largest value in max
 
   # Zero the components that are less than 40% of the max
 
@@ -129,16 +129,17 @@ def compute():
 
   magPositionList = list() #list of x,y coords of none zero magnitudes
 
+  gridImageFT = imageFT.copy()
+  print gridImageFT
+  print 'above is the gridImageFT'
+
   for x in range(height):
     for y in range(width):
       if FTmagnitudes[x,y] < minThreshold:
-        FTmagnitudes[x,y] = 0
+        gridImageFT[x,y] = 0
       else:
         #add none zero magnitudes to a list and set gridImageFT to that list
         magPositionList.append([x,y])
-
-  gridImageFT = np.array(magPositionList) #convert list to np array so it has shape attribute
-  print gridImageFT
 
   if gridImageFT is None:
     gridImageFT = np.zeros( (height,width), dtype=np.complex_ )
@@ -150,6 +151,14 @@ def compute():
   lines = [[1,2],[3,4]]
 
   print '4. finding angles and distances of grid lines'
+
+  for x in range(gridImageFT.shape[0]):
+    #find the angle between 0,1 and this vector x,y
+    vector = gridImageFT[x]
+
+    dot = 0*vector[0] + 1*vector[1]      # dot product
+    det = 0*vector[1] - 1*vector[0]      # determinant
+    angle = math.degrees(math.atan2(det, dot))  # atan2(y, x) or atan2(sin, cos) TODO should this be in radians or degrees?
 
   # Convert back to spatial domain to get a grid-like image
 
@@ -164,13 +173,6 @@ def compute():
 
   print '6. remove grid'
 
-  print gridImage
-  resultImage = image.copy()
-
-  for x in range(gridImage.shape[0]):
-    for y in range(gridImage.shape[1]):
-      if gridImage[x,y] > 16:
-        resultImage[x,y] = 0
 
   if resultImage is None:
     resultImage = image.copy()
