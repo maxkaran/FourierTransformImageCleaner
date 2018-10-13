@@ -108,14 +108,20 @@ def compute():
 
   print '2. computing FT magnitudes'
 
-  FTmagnitudes = imageFT
+  FTmagnitudes = np.array(imageFT)
+  
+  max = 0 #this will keep track of the largest magnitude except for the DC component at [0,0]
   
   for x in range(height):
     for y in range(width):
-      ak =  2 * np.real(FTmagnitudes[x,y])
-      bk = -2 * np.imag(FTmagnitudes[x,y])
+      ak =  2 * np.real(imageFT[x,y])
+      bk = -2 * np.imag(imageFT[x,y])
       FTmagnitudes[x,y] = np.sqrt( ak*ak + bk*bk )
+      if x != 0 and y != 0 and FTmagnitudes[x,y] > max:
+        max = FTmagnitudes[x,y]
 
+  print max
+  print FTmagnitudes[0,0]
   # Zero the components that are less than 40% of the max
 
   print '3. removing low-magnitude components'
