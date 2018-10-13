@@ -108,6 +108,14 @@ def compute():
 
   print '2. computing FT magnitudes'
 
+  FTmagnitudes = imageFT
+  
+  for x in range(height):
+    for y in range(width):
+      ak =  2 * np.real(FTmagnitudes[x,y])
+      bk = -2 * np.imag(FTmagnitudes[x,y])
+      FTmagnitudes[x,y] = np.sqrt( ak*ak + bk*bk )
+
   # Zero the components that are less than 40% of the max
 
   print '3. removing low-magnitude components'
