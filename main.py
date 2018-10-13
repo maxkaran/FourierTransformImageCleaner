@@ -120,11 +120,24 @@ def compute():
       if x != 0 and y != 0 and FTmagnitudes[x,y] > max:
         max = FTmagnitudes[x,y]
 
-  print max
-  print FTmagnitudes[0,0]
   # Zero the components that are less than 40% of the max
 
   print '3. removing low-magnitude components'
+
+  minThreshold = max*0.4 #minimum thresholds for magnitudes, these will be zeroed if they are below the threshlold
+
+  magPositionList = list() #list of x,y coords of none zero magnitudes
+
+  for x in range(height):
+    for y in range(width):
+      if FTmagnitudes[x,y] < minThreshold:
+        FTmagnitudes[x,y] = 0
+      else:
+        #TODO add none zero magnitudes to a list and set gridImageFT to that list
+        magPositionList.append([x,y])
+
+  gridImageFT = np.array(magPositionList)
+  print gridImageFT
 
   if gridImageFT is None:
     gridImageFT = np.zeros( (height,width), dtype=np.complex_ )
