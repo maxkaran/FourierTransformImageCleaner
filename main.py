@@ -146,17 +146,36 @@ def compute():
   #
   # lines = [ (angle1,distance1), (angle2,distance2) ]
 
-  lines = [[1,2],[3,4]]
+  #lines = [[1,2],[3,4]]
 
   print '4. finding angles and distances of grid lines'
 
-  for x in range(gridImageFT.shape[0]):
-    #find the angle between 0,1 and this vector x,y
-    vector = gridImageFT[x]
+  Acount = 0
+  Bcount = 0
+  AangleTotal = 0
+  BangleTotal = 0
+  AmagTotal = 0
+  BmagTotal = 0
 
-    dot = 0*vector[0] + 1*vector[1]      # dot product
-    det = 0*vector[1] - 1*vector[0]      # determinant
-    angle = math.degrees(math.atan2(det, dot))  # atan2(y, x) or atan2(sin, cos) TODO should this be in radians or degrees?
+  for x in range(gridImageFT.shape[0]):
+    for y in range(gridImageFT.shape[1]/2):
+      #find the angle between 0,1 and this vector x,y
+      if gridImageFT[x,y] > 0:
+        newX = x - gridImageFT.shape[0]/2
+        newY = y - gridImageFT.shape[1]/2
+        if newX < 0 and newY <= 0 and (x != 0 or y != 0):
+          Acount = Acount + 1
+          AangleTotal = AangleTotal + math.degrees(math.atan2(y, x))
+          AmagTotal = AmagTotal + math.sqrt(x**2 + y**2)
+          print Acount, newY, newX, math.degrees(math.atan2(y, x))
+
+
+        elif newX >= 0 and newY < 0 and (x != 0 or y != 0):
+          Bcount = Bcount + 1
+          BangleTotal = BangleTotal + math.degrees(math.atan2(x, y))
+          BmagTotal = BmagTotal + math.sqrt((newX)**2 + y**2)
+        
+  lines = [(AangleTotal/Acount, AmagTotal/Acount), (BangleTotal/Bcount, BmagTotal/Bcount)]
 
   # Convert back to spatial domain to get a grid-like image
 
@@ -504,7 +523,7 @@ def keyboard( key, x, y ):
     translate = (0,0)
 
   elif key == 'c': # compute
-    image, lines = compute()
+    resultImage, lines = compute()
     print 'Grid lines:'
     for line in lines:
       print '  angle %.1f, distance %d' % (line[0],line[1])
